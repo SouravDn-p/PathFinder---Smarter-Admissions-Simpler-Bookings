@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SessionWrapper from "@/components/wrapper/SessionWrapper";
+import ClientProvider from "@/components/wrapper/ClientWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,12 +20,14 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <SessionWrapper>
-          <AuthProvider>
-            <Navbar />
-            {children}
-            <Footer />
-            <Toaster position="top-right" />
-          </AuthProvider>
+          <ClientProvider>
+            <AuthProvider>
+              <Navbar />
+              {children}
+              <Footer />
+              <Toaster position="top-right" />
+            </AuthProvider>
+          </ClientProvider>
         </SessionWrapper>
       </body>
     </html>
