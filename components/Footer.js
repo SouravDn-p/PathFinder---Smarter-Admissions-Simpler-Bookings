@@ -10,27 +10,18 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white mt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-gradient-to-r from-indigo-900 to-purple-900 text-white py-12">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="grid md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-2xl font-bold text-blue-400 mb-4">
-              PathFinder
-            </h3>
-            <p className="text-gray-300 mb-4">
-              Your gateway to higher education. Discover and book college
-              services with ease.
+            <h3 className="text-2xl font-bold mb-4">PathFinder</h3>
+            <p className="text-blue-200">
+              Connecting students with their dream colleges.
             </p>
-            <div className="flex space-x-4">
-              <Facebook className="h-6 w-6 text-blue-400 hover:text-blue-300 cursor-pointer" />
-              <Twitter className="h-6 w-6 text-blue-400 hover:text-blue-300 cursor-pointer" />
-              <Instagram className="h-6 w-6 text-blue-400 hover:text-blue-300 cursor-pointer" />
-            </div>
           </div>
-
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-gray-300">
+            <h4 className="font-bold mb-4">Quick Links</h4>
+            <ul className="space-y-2 text-blue-200">
               <li>
                 <Link href="/" className="hover:text-white transition-colors">
                   Home
@@ -52,60 +43,50 @@ export default function Footer() {
                   Admission
                 </a>
               </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold mb-4">Support</h4>
+            <ul className="space-y-2 text-blue-200">
               <li>
-                <a href="/about" className="hover:text-white transition-colors">
-                  About Us
+                <a href="#" className="hover:text-white transition-colors">
+                  Help Center
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  Contact Us
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  FAQ
                 </a>
               </li>
             </ul>
           </div>
-
           <div>
-            <h4 className="text-lg font-semibold mb-4">Services</h4>
-            <ul className="space-y-2 text-gray-300">
+            <h4 className="font-bold mb-4">Connect</h4>
+            <ul className="space-y-2 text-blue-200">
               <li>
                 <a href="#" className="hover:text-white transition-colors">
-                  College Search
+                  Facebook
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-white transition-colors">
-                  Application Help
+                  Twitter
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-white transition-colors">
-                  Career Guidance
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Scholarship Info
+                  LinkedIn
                 </a>
               </li>
             </ul>
-          </div>
-
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
-            <div className="space-y-2 text-gray-300">
-              <div className="flex items-center">
-                <Mail className="h-4 w-4 mr-2" />
-                <span>info@PathFinder.com</span>
-              </div>
-              <div className="flex items-center">
-                <Phone className="h-4 w-4 mr-2" />
-                <span>+1 (555) 123-4567</span>
-              </div>
-              <div className="flex items-center">
-                <MapPin className="h-4 w-4 mr-2" />
-                <span>123 Education St, Learning City</span>
-              </div>
-            </div>
           </div>
         </div>
-
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+        <div className="border-t border-white/20 mt-8 pt-8 text-center text-blue-200">
           <p>&copy; 2024 PathFinder. All rights reserved.</p>
         </div>
       </div>
