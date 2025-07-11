@@ -21,9 +21,9 @@ const CustomButton = forwardRef(
       warning:
         "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl focus:ring-yellow-500",
       danger:
-        "bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl focus:ring-red-500",
+        "bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl focus:ring-red-500 hover:text-black",
       outline:
-        "border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white bg-transparent shadow-md hover:shadow-lg focus:ring-blue-500",
+        "border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white bg-transparent shadow-md hover:shadow-lg focus:ring-blue-500 hover:text-blue",
       ghost:
         "text-gray-700 hover:bg-gray-100 hover:text-gray-900 bg-transparent focus:ring-gray-500",
       link: "text-blue-600 hover:text-blue-800 underline-offset-4 hover:underline bg-transparent focus:ring-blue-500",
