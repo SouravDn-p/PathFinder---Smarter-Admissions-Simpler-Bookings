@@ -1,25 +1,33 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CollegeCard from "@/components/Home/college-card";
 import { Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Input from "@/components/ui/input";
-import getAllColleges from "@/lib/getAllColleges";
-
-// Extended mock data for colleges page
-const allColleges = getAllColleges();
+import { useGetAllCollegesQuery } from "@/redux/api/collegeApi";
 
 const ITEMS_PER_PAGE = 6;
 
 export default function CollegesPage() {
-  const [colleges, setColleges] = useState(allColleges);
+  const { data, error, isLoading, refetch } = useGetAllCollegesQuery();
+  const allColleges = data?.data;
+  const [colleges, setColleges] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    if (allColleges) {
+      setColleges(allColleges);
+    }
+  }, [allColleges]);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error fetching colleges?.</p>;
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      const filtered = allColleges.filter((college) =>
+      const filtered = allColleges?.filter((college) =>
         college.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setColleges(filtered);
@@ -30,10 +38,10 @@ export default function CollegesPage() {
   };
 
   // Pagination logic
-  const totalPages = Math.ceil(colleges.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(colleges?.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentColleges = colleges.slice(startIndex, endIndex);
+  const currentColleges = colleges?.slice(startIndex, endIndex);
 
   const goToPage = (page) => {
     setCurrentPage(page);
@@ -75,7 +83,7 @@ export default function CollegesPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
                 type="text"
-                placeholder="Search colleges..."
+                placeholder="Search colleges?..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500"
@@ -103,8 +111,8 @@ export default function CollegesPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="mb-8 flex justify-between items-center">
             <h2 className="text-2xl font-bold text-gray-800">
-              Showing {startIndex + 1}-{Math.min(endIndex, colleges.length)} of{" "}
-              {colleges.length} colleges
+              Showing {startIndex + 1}-{Math.min(endIndex, colleges?.length)} of{" "}
+              {colleges?.length} colleges
             </h2>
             <div className="text-sm text-gray-600">
               Page {currentPage} of {totalPages}
@@ -112,12 +120,12 @@ export default function CollegesPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {currentColleges.map((college) => (
+            {currentColleges?.map((college) => (
               <CollegeCard key={college.id} college={college} />
             ))}
           </div>
 
-          {colleges.length === 0 && (
+          {colleges?.length === 0 && (
             <div className="text-center py-16">
               <h3 className="text-2xl font-bold text-gray-600 mb-4">
                 No colleges found

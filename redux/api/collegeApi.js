@@ -10,40 +10,13 @@ export const collegeApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Product"],
+  tagTypes: ["college", "user"],
+
   endpoints: (builder) => ({
-    // getProducts: builder.query({
-    //   query: () => "products",
-    //   providesTags: ["Product"],
-    // }),
-    // getProductById: builder.query({
-    //   query: (id) => `products/${id}`,
-    //   providesTags: (result, error, id) => [{ type: "Product", id }],
-    // }),
-    // createProduct: builder.mutation({
-    //   query: (product) => ({
-    //     url: "products",
-    //     method: "POST",
-    //     body: product,
-    //   }),
-    //   invalidatesTags: ["Product"],
-    // }),
-    // updateProduct: builder.mutation({
-    //   query: ({ id, ...patch }) => ({
-    //     url: `products/${id}`,
-    //     method: "PUT",
-    //     body: patch,
-    //   }),
-    //   invalidatesTags: (result, error, { id }) => [{ type: "Product", id }],
-    // }),
-    // deleteProduct: builder.mutation({
-    //   query: (id) => ({
-    //     url: `products/${id}`,
-    //     method: "DELETE",
-    //   }),
-    //   invalidatesTags: ["Product"],
-    // }),
-    // --- Auth Endpoints ---
+    getAllColleges: builder.query({
+      query: () => "colleges",
+    }),
+
     registerUser: builder.mutation({
       query: (userData) => ({
         url: "auth/register",
@@ -51,30 +24,28 @@ export const collegeApi = createApi({
         body: userData,
       }),
     }),
-    getAllUsers: builder.query({
-      query: () => "users",
-    }),
+
     getUserByEmail: builder.query({
       query: (email) => `users/${email}`,
+      providesTags: (result, error, email) => [{ type: "user", id: email }],
     }),
+
     updateUser: builder.mutation({
       query: ({ email, data }) => ({
         url: `users/${email}`,
         method: "PUT",
         body: data,
       }),
+      invalidatesTags: (result, error, { email }) => [
+        { type: "user", id: email },
+      ],
     }),
   }),
 });
 
 export const {
-  // useGetProductsQuery,
-  // useGetProductByIdQuery,
-  // useCreateProductMutation,
-  // useUpdateProductMutation,
-  // useDeleteProductMutation,
+  useGetAllCollegesQuery,
   useRegisterUserMutation,
-  useGetAllUsersQuery,
   useGetUserByEmailQuery,
   useUpdateUserMutation,
 } = collegeApi;

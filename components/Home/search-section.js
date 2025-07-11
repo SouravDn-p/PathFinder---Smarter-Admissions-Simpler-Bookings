@@ -24,7 +24,6 @@ export default function SearchSection({ onSearch }) {
         <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
           Find Your Perfect
           <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            {" "}
             College
           </span>
         </h2>
@@ -54,7 +53,7 @@ export default function SearchSection({ onSearch }) {
           </div>
         </form>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
+        {/* <div className="mt-8 flex flex-wrap justify-center gap-3">
           {["Engineering", "Medical", "Business", "Arts", "Science"].map(
             (category) => (
               <Button
@@ -67,7 +66,7 @@ export default function SearchSection({ onSearch }) {
               </Button>
             )
           )}
-        </div>
+        </div> */}
       </div>
     </section>
   );

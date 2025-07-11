@@ -1,3 +1,4 @@
+"use client";
 import CustomButton from "../../../components/custom-button";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,11 +21,17 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import getAllColleges from "@/lib/getAllColleges";
 import CollegeNotFound from "@/components/college/CollegeNotFound";
-
-const allColleges = getAllColleges();
+import { useGetAllCollegesQuery } from "@/redux/api/collegeApi";
+import React from "react";
 
 export default function CollegeDetailsPage({ params }) {
-  const college = allColleges.find((col) => col.id === Number(params.id));
+  const actualParams = React.use(params);
+  const { data, error, isLoading } = useGetAllCollegesQuery();
+  const allColleges = data?.data;
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error fetching colleges?.</p>;
+
+  const college = allColleges.find((col) => col._id === actualParams.id);
 
   if (!college) {
     return <CollegeNotFound />;
@@ -73,10 +80,16 @@ export default function CollegeDetailsPage({ params }) {
               </p>
 
               <div className="flex flex-wrap gap-4">
-                <CustomButton variant="warning" size="lg">
-                  <Globe className="w-4 h-4 mr-2" />
-                  Visit Website
-                </CustomButton>
+                <a
+                  href={college.website}
+                  target="blank"
+                  rel="noopener noreferrer"
+                >
+                  <CustomButton variant="warning" size="lg">
+                    <Globe className="w-4 h-4 mr-2" />
+                    Visit Website
+                  </CustomButton>
+                </a>
                 <CustomButton
                   variant="outline"
                   className="border-white text-white hover:bg-white hover:text-indigo-600"

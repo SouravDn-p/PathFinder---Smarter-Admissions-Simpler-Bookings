@@ -67,7 +67,7 @@ export default function CollegeCard({ college }) {
       </CardContent>
 
       <CardFooter className="p-6 pt-0">
-        <Link href={`/colleges/${college.id}`} className="w-full">
+        <Link href={`/colleges/${college._id}`} className="w-full">
           <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl transition-all duration-300 hover:shadow-lg">
             View Details
           </Button>

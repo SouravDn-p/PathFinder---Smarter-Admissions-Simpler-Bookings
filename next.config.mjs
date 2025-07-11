@@ -7,6 +7,9 @@ const nextConfig = {
       "lh3.googleusercontent.com",
       "media.istockphoto.com",
       "scontent.fdac24-5.fna.fbcdn.net",
+      "encrypted-tbn0.gstatic.com",
+      "images.unsplash.com",
+      "cdn.britannica.com",
     ],
   },
 };
