@@ -19,16 +19,16 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import getAllColleges from "@/lib/getAllColleges";
 import CollegeNotFound from "@/components/college/CollegeNotFound";
 import { useGetAllCollegesQuery } from "@/redux/api/collegeApi";
 import React from "react";
+import CollegeDetailLoading from "@/components/loadings/CollegeDetailsLoading";
 
 export default function CollegeDetailsPage({ params }) {
   const actualParams = React.use(params);
   const { data, error, isLoading } = useGetAllCollegesQuery();
   const allColleges = data?.data;
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <CollegeDetailLoading />;
   if (error) return <p>Error fetching colleges?.</p>;
 
   const college = allColleges.find((col) => col._id === actualParams.id);

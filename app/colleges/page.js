@@ -5,6 +5,7 @@ import { Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import { useGetAllCollegesQuery } from "@/redux/api/collegeApi";
+import CollegeLoading from "@/components/loadings/CollegeLoading";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -21,7 +22,7 @@ export default function CollegesPage() {
     }
   }, [allColleges]);
 
-  if (isLoading) return <p>Loading...</p>;
+  // if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error fetching colleges?.</p>;
 
   const handleSearch = (e) => {
@@ -119,11 +120,15 @@ export default function CollegesPage() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {currentColleges?.map((college) => (
-              <CollegeCard key={college.id} college={college} />
-            ))}
-          </div>
+          {isLoading ? (
+            <CollegeLoading />
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {currentColleges?.map((college) => (
+                <CollegeCard key={college.id} college={college} />
+              ))}
+            </div>
+          )}
 
           {colleges?.length === 0 && (
             <div className="text-center py-16">

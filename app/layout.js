@@ -1,6 +1,5 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -21,12 +20,10 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <SessionWrapper>
           <ClientProvider>
-            <AuthProvider>
-              <Navbar />
-              {children}
-              <Footer />
-              <Toaster position="top-right" />
-            </AuthProvider>
+            <Navbar />
+            {children}
+            <Footer />
+            <Toaster position="top-right" />
           </ClientProvider>
         </SessionWrapper>
       </body>

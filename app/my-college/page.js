@@ -1,412 +1,401 @@
 "use client";
-
-import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import Input from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import {
-  Star,
+  useGetUserByEmailQuery,
+  useGetAllCollegesQuery,
+  useGetReviewsQuery,
+} from "@/redux/api/collegeApi";
+import MyCollegeLoading from "@/components/loadings/MyCollegeLoading";
+import ReviewForm from "@/components/myCollege/ReviewForm";
+import ReviewList from "@/components/myCollege/ReviewList";
+import CustomButton from "@/components/custom-button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  GraduationCap,
   MapPin,
   Calendar,
-  Mail,
+  Star,
+  Users,
+  BookOpen,
+  Trophy,
   Phone,
-  Home,
-  FileText,
-  Edit3,
-  Save,
-  X,
+  Mail,
+  Globe,
+  CheckCircle,
+  Clock,
+  AlertCircle,
 } from "lucide-react";
-import { toast } from "sonner";
-import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function MyCollege() {
-  const { data: session } = useSession();
-  const { user } = session;
+  const { data: session, status } = useSession();
   const router = useRouter();
-  const [applications, setApplications] = useState([]);
-  const [reviews, setReviews] = useState([]);
-  const [newReview, setNewReview] = useState({
-    rating: 5,
-    comment: "",
+
+  // Get user data
+  const {
+    data: userData,
+    isLoading: userLoading,
+    refetch: refetchUser,
+  } = useGetUserByEmailQuery(session?.user?.email, {
+    skip: !session?.user?.email,
   });
-  const [editingReview, setEditingReview] = useState(null);
 
-  useEffect(() => {
-    if (!user) {
-      router.push("/login");
-      return;
-    }
+  // Get all colleges data
+  const { data: collegesData, isLoading: collegesLoading } =
+    useGetAllCollegesQuery();
 
-    // Load applications
-    const savedApplications = JSON.parse(
-      localStorage.getItem("applications") || "[]"
-    );
-    setApplications(savedApplications);
+  // Get reviews for the college
+  const {
+    data: reviewsData,
+    isLoading: reviewsLoading,
+    refetch: refetchReviews,
+  } = useGetReviewsQuery(userData?.data?.collegeId, {
+    skip: !userData?.data?.collegeId,
+  });
 
-    // Load reviews
-    const savedReviews = JSON.parse(localStorage.getItem("reviews") || "[]");
-    setReviews(savedReviews);
-  }, [user, router]);
+  // Loading state
+  if (status === "loading" || userLoading || collegesLoading) {
+    return <MyCollegeLoading />;
+  }
 
-  const handleReviewSubmit = (e) => {
-    e.preventDefault();
-
-    if (!newReview.comment.trim()) {
-      toast.error("Please write a review comment");
-      return;
-    }
-
-    if (applications.length === 0) {
-      toast.error("Please apply to a college first to leave a review");
-      return;
-    }
-
-    const reviewData = {
-      id: Date.now(),
-      userId: user.id,
-      userName: user.name,
-      userImage: user.profileImage,
-      college: applications[0].college.name, // Use first application's college
-      rating: newReview.rating,
-      comment: newReview.comment,
-      createdAt: new Date().toISOString(),
-    };
-
-    const updatedReviews = [...reviews, reviewData];
-    setReviews(updatedReviews);
-    localStorage.setItem("reviews", JSON.stringify(updatedReviews));
-
-    // Also update global reviews for home page
-    const globalReviews = JSON.parse(
-      localStorage.getItem("globalReviews") || "[]"
-    );
-    globalReviews.push(reviewData);
-    localStorage.setItem("globalReviews", JSON.stringify(globalReviews));
-
-    setNewReview({ rating: 5, comment: "" });
-    toast.success("Review submitted successfully!");
-  };
-
-  const handleEditReview = (review) => {
-    setEditingReview({
-      ...review,
-      comment: review.comment,
-    });
-  };
-
-  const handleUpdateReview = (e) => {
-    e.preventDefault();
-
-    const updatedReviews = reviews.map((review) =>
-      review.id === editingReview.id ? editingReview : review
-    );
-
-    setReviews(updatedReviews);
-    localStorage.setItem("reviews", JSON.stringify(updatedReviews));
-
-    // Update global reviews
-    const globalReviews = JSON.parse(
-      localStorage.getItem("globalReviews") || "[]"
-    );
-    const updatedGlobalReviews = globalReviews.map((review) =>
-      review.id === editingReview.id ? editingReview : review
-    );
-    localStorage.setItem("globalReviews", JSON.stringify(updatedGlobalReviews));
-
-    setEditingReview(null);
-    toast.success("Review updated successfully!");
-  };
-
-  const handleDeleteReview = (reviewId) => {
-    const updatedReviews = reviews.filter((review) => review.id !== reviewId);
-    setReviews(updatedReviews);
-    localStorage.setItem("reviews", JSON.stringify(updatedReviews));
-
-    // Update global reviews
-    const globalReviews = JSON.parse(
-      localStorage.getItem("globalReviews") || "[]"
-    );
-    const updatedGlobalReviews = globalReviews.filter(
-      (review) => review.id !== reviewId
-    );
-    localStorage.setItem("globalReviews", JSON.stringify(updatedGlobalReviews));
-
-    toast.success("Review deleted successfully!");
-  };
-
-  if (!user) {
+  // Redirect if not authenticated
+  if (!session) {
+    router.push("/login");
     return null;
   }
 
+  const user = userData?.data;
+  const colleges = collegesData?.data || [];
+  const applications = user?.applications || [];
+  const reviews = reviewsData?.data || [];
+
+  // Find the college by ID
+  const college = colleges.find((c) => c._id === user?.collegeId);
+
+  // Get the latest application
+  const latestApplication = applications[applications.length - 1];
+
+  const handleReviewAdded = () => {
+    refetchReviews();
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "approved":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "approved":
+        return <CheckCircle className="w-4 h-4" />;
+      case "pending":
+        return <Clock className="w-4 h-4" />;
+      case "rejected":
+        return <AlertCircle className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
+    }
+  };
+
+  // If no applications
+  if (applications.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-yellow-400 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute top-40 right-20 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-20 left-40 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+        </div>
+
+        {/* Header */}
+        <section className="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16 z-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <GraduationCap className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">My College</h1>
+            <p className="text-xl text-blue-100">
+              Your college application dashboard
+            </p>
+          </div>
+        </section>
+
+        {/* No Applications */}
+        <section className="py-16 relative z-10">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <Card className="bg-white/95 backdrop-blur-sm shadow-2xl border-0">
+              <CardContent className="p-12">
+                <div className="w-20 h-20 bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <GraduationCap className="w-10 h-10 text-blue-600" />
+                </div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                  No Applications Yet
+                </h2>
+                <p className="text-gray-600 mb-8 text-lg">
+                  You haven&apos;t applied to any colleges yet. Start your
+                  journey by applying to your dream college!
+                </p>
+                <div className="flex justify-center space-x-4">
+                  <Link href="/admission">
+                    <CustomButton variant="primary" size="lg">
+                      Apply Now
+                    </CustomButton>
+                  </Link>
+                  <Link href="/colleges">
+                    <CustomButton
+                      variant="outline"
+                      size="lg"
+                      className="border-2 border-gray-200 text-gray-700 hover:bg-gray-50"
+                    >
+                      Browse Colleges
+                    </CustomButton>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-yellow-400 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+        <div className="absolute top-40 right-20 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-20 left-40 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+      </div>
+
+      {/* Header */}
+      <section className="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <GraduationCap className="w-8 h-8 text-white" />
+          </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">My College</h1>
-          <p className="text-xl">
-            Manage your college applications and reviews
+          <p className="text-xl text-blue-100">
+            Your college application dashboard
           </p>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Applications Section */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold">My Applications</h2>
-
-            {applications.length === 0 ? (
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <p className="text-gray-600 mb-4">
-                    You haven't applied to any colleges yet.
-                  </p>
-                  <Button onClick={() => router.push("/admission")}>
-                    Apply Now
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              applications.map((application, index) => (
-                <Card key={index}>
+      {/* Main Content */}
+      <section className="py-16 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* College Information */}
+            <div className="lg:col-span-2">
+              {college ? (
+                <Card className="bg-white/95 backdrop-blur-sm shadow-2xl border-0">
                   <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span>{application.college.name}</span>
-                      <span className="text-sm text-green-600 font-normal">
-                        Application Submitted
-                      </span>
-                    </CardTitle>
+                    <div className="flex items-center space-x-4">
+                      <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center">
+                        <GraduationCap className="w-10 h-10 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <CardTitle className="text-2xl text-gray-800">
+                          {college.name}
+                        </CardTitle>
+                        <div className="flex items-center text-gray-600 mt-1">
+                          <MapPin className="w-4 h-4 mr-2" />
+                          <span>{college.location}</span>
+                        </div>
+                        <div className="flex items-center mt-1">
+                          <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                          <span className="font-medium">{college.rating}</span>
+                          <span className="text-gray-500 ml-1">
+                            ({reviews.length} reviews)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-sm font-medium text-gray-600">
-                          <FileText className="h-4 w-4 inline mr-1" />
-                          Subject/Major
-                        </Label>
-                        <p className="font-medium">{application.subject}</p>
+                  <CardContent className="space-y-6">
+                    {/* Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="text-center p-4 bg-blue-50 rounded-xl">
+                        <Users className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+                        <div className="text-2xl font-bold text-blue-600">
+                          {college.stats?.students}
+                        </div>
+                        <div className="text-sm text-gray-600">Students</div>
                       </div>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-600">
-                          <Mail className="h-4 w-4 inline mr-1" />
-                          Email
-                        </Label>
-                        <p className="font-medium">
-                          {application.candidateEmail}
-                        </p>
+                      <div className="text-center p-4 bg-purple-50 rounded-xl">
+                        <BookOpen className="w-6 h-6 text-purple-600 mx-auto mb-2" />
+                        <div className="text-2xl font-bold text-purple-600">
+                          {college.stats?.faculty}
+                        </div>
+                        <div className="text-sm text-gray-600">Faculty</div>
                       </div>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-600">
-                          <Phone className="h-4 w-4 inline mr-1" />
-                          Phone
-                        </Label>
-                        <p className="font-medium">
-                          {application.candidatePhone}
-                        </p>
+                      <div className="text-center p-4 bg-green-50 rounded-xl">
+                        <Trophy className="w-6 h-6 text-green-600 mx-auto mb-2" />
+                        <div className="text-2xl font-bold text-green-600">
+                          {college.stats?.programs}
+                        </div>
+                        <div className="text-sm text-gray-600">Programs</div>
                       </div>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-600">
-                          <Calendar className="h-4 w-4 inline mr-1" />
-                          Date of Birth
-                        </Label>
-                        <p className="font-medium">{application.dateOfBirth}</p>
+                      <div className="text-center p-4 bg-orange-50 rounded-xl">
+                        <Calendar className="w-6 h-6 text-orange-600 mx-auto mb-2" />
+                        <div className="text-2xl font-bold text-orange-600">
+                          {college.established}
+                        </div>
+                        <div className="text-sm text-gray-600">Established</div>
                       </div>
                     </div>
+
+                    {/* Description */}
                     <div>
-                      <Label className="text-sm font-medium text-gray-600">
-                        <Home className="h-4 w-4 inline mr-1" />
-                        Address
-                      </Label>
-                      <p className="font-medium">{application.address}</p>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                        About
+                      </h3>
+                      <p className="text-gray-700 leading-relaxed">
+                        {college.description}
+                      </p>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      Applied on:{" "}
-                      {new Date(application.submittedAt).toLocaleDateString()}
+
+                    {/* Facilities */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                        Facilities
+                      </h3>
+                      <div className="grid md:grid-cols-2 gap-2">
+                        {college.facilities?.map((facility, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center text-gray-700"
+                          >
+                            <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
+                            {facility}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Contact Information */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                        Contact Information
+                      </h3>
+                      <div className="grid md:grid-cols-3 gap-4">
+                        <div className="flex items-center text-gray-700">
+                          <Phone className="w-4 h-4 mr-2 text-blue-600" />
+                          <span className="text-sm">{college.phone}</span>
+                        </div>
+                        <div className="flex items-center text-gray-700">
+                          <Mail className="w-4 h-4 mr-2 text-purple-600" />
+                          <span className="text-sm">{college.email}</span>
+                        </div>
+                        <div className="flex items-center text-gray-700">
+                          <Globe className="w-4 h-4 mr-2 text-green-600" />
+                          <span className="text-sm">{college.website}</span>
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
-              ))
-            )}
+              ) : (
+                <Card className="bg-white/95 backdrop-blur-sm shadow-2xl border-0">
+                  <CardContent className="p-12 text-center">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <AlertCircle className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                      College Information Not Found
+                    </h3>
+                    <p className="text-gray-600">
+                      The college information is not available at the moment.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Application Status */}
+              <Card className="bg-white/95 backdrop-blur-sm shadow-2xl border-0">
+                <CardHeader>
+                  <CardTitle className="text-xl text-gray-800">
+                    Application Status
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {latestApplication && (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Status:</span>
+                        <Badge
+                          className={`${getStatusColor(
+                            latestApplication.status
+                          )} flex items-center space-x-1`}
+                        >
+                          {getStatusIcon(latestApplication.status)}
+                          <span className="capitalize">
+                            {latestApplication.status}
+                          </span>
+                        </Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Subject:</span>
+                        <span className="font-medium">
+                          {latestApplication.subject}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Applied:</span>
+                        <span className="text-sm">
+                          {new Date(
+                            latestApplication.submittedAt
+                          ).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <Link href="/admission">
+                        <CustomButton
+                          variant="outline"
+                          className="w-full border-2 border-gray-200 text-gray-700 hover:bg-gray-50"
+                        >
+                          Apply to Another College
+                        </CustomButton>
+                      </Link>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Review Form */}
+              {college && (
+                <ReviewForm
+                  collegeId={college._id.toString()}
+                  onReviewAdded={handleReviewAdded}
+                />
+              )}
+            </div>
           </div>
 
           {/* Reviews Section */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold">My Reviews</h2>
-
-            {/* Add Review Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Add a Review</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleReviewSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="rating">Rating</Label>
-                    <div className="flex items-center space-x-2">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() =>
-                            setNewReview((prev) => ({ ...prev, rating: star }))
-                          }
-                          className={`p-1 ${
-                            star <= newReview.rating
-                              ? "text-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        >
-                          <Star className="h-6 w-6 fill-current" />
-                        </button>
-                      ))}
-                      <span className="text-sm text-gray-600">
-                        {newReview.rating} star
-                        {newReview.rating !== 1 ? "s" : ""}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="comment">Your Review</Label>
-                    <Textarea
-                      id="comment"
-                      placeholder="Write your review about the college..."
-                      value={newReview.comment}
-                      onChange={(e) =>
-                        setNewReview((prev) => ({
-                          ...prev,
-                          comment: e.target.value,
-                        }))
-                      }
-                      rows={4}
-                    />
-                  </div>
-
-                  <Button type="submit" className="w-full">
-                    Submit Review
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-
-            {/* Existing Reviews */}
-            {reviews.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Your Reviews</h3>
-                {reviews.map((review) => (
-                  <Card key={review.id}>
-                    <CardContent className="p-4">
-                      {editingReview && editingReview.id === review.id ? (
-                        <form
-                          onSubmit={handleUpdateReview}
-                          className="space-y-4"
-                        >
-                          <div>
-                            <Label>Rating</Label>
-                            <div className="flex items-center space-x-2">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <button
-                                  key={star}
-                                  type="button"
-                                  onClick={() =>
-                                    setEditingReview((prev) => ({
-                                      ...prev,
-                                      rating: star,
-                                    }))
-                                  }
-                                  className={`p-1 ${
-                                    star <= editingReview.rating
-                                      ? "text-yellow-400"
-                                      : "text-gray-300"
-                                  }`}
-                                >
-                                  <Star className="h-5 w-5 fill-current" />
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                          <div>
-                            <Label>Comment</Label>
-                            <Textarea
-                              value={editingReview.comment}
-                              onChange={(e) =>
-                                setEditingReview((prev) => ({
-                                  ...prev,
-                                  comment: e.target.value,
-                                }))
-                              }
-                              rows={3}
-                            />
-                          </div>
-                          <div className="flex space-x-2">
-                            <Button type="submit" size="sm">
-                              <Save className="h-4 w-4 mr-1" />
-                              Save
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setEditingReview(null)}
-                            >
-                              <X className="h-4 w-4 mr-1" />
-                              Cancel
-                            </Button>
-                          </div>
-                        </form>
-                      ) : (
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center space-x-2">
-                              <div className="flex items-center">
-                                {[...Array(review.rating)].map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className="h-4 w-4 text-yellow-400 fill-current"
-                                  />
-                                ))}
-                              </div>
-                              <span className="text-sm text-gray-600">
-                                {review.college}
-                              </span>
-                            </div>
-                            <div className="flex space-x-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleEditReview(review)}
-                              >
-                                <Edit3 className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleDeleteReview(review.id)}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <p className="text-gray-700 mb-2">{review.comment}</p>
-                          <p className="text-sm text-gray-500">
-                            {new Date(review.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </div>
+          {college && (
+            <div className="mt-12">
+              <h2 className="text-3xl font-bold text-gray-800 mb-6">
+                Student Reviews
+              </h2>
+              <ReviewList reviews={reviews} isLoading={reviewsLoading} />
+            </div>
+          )}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

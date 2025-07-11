@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,7 @@ import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 
 export default function Profile() {
-  const { updateProfile } = useAuth();
+  // const { updateProfile } = useAuth();
   const { data: session, status } = useSession();
   const user = session?.user;
   const router = useRouter();
@@ -67,7 +66,7 @@ export default function Profile() {
       ...formData,
     };
 
-    updateProfile(updatedUser);
+    // updateProfile(updatedUser);
     setIsEditing(false);
     toast.success("Profile updated successfully!");
   };
