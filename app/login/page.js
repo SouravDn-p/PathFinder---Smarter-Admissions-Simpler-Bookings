@@ -241,7 +241,7 @@ export default function LoginPage() {
           <h2 className="text-4xl font-bold text-gray-800 mb-2">
             Welcome Back
           </h2>
-          <p className="text-gray-600">Sign in to your EduConnect account</p>
+          <p className="text-gray-600">Sign in to your PathFinder account</p>
           <p className="mt-2 text-sm text-gray-500">
             Don&apos;t have an account?{" "}
             <Link

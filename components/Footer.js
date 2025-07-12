@@ -28,20 +28,20 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/colleges"
                   className="hover:text-white transition-colors"
                 >
                   Colleges
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/admission"
                   className="hover:text-white transition-colors"
                 >
                   Admission
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -49,19 +49,19 @@ export default function Footer() {
             <h4 className="font-bold mb-4">Support</h4>
             <ul className="space-y-2 text-blue-200">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="#" className="hover:text-white transition-colors">
                   Help Center
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="#" className="hover:text-white transition-colors">
                   Contact Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="#" className="hover:text-white transition-colors">
                   FAQ
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -69,19 +69,19 @@ export default function Footer() {
             <h4 className="font-bold mb-4">Connect</h4>
             <ul className="space-y-2 text-blue-200">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="#" className="hover:text-white transition-colors">
                   Facebook
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="#" className="hover:text-white transition-colors">
                   Twitter
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="#" className="hover:text-white transition-colors">
                   LinkedIn
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

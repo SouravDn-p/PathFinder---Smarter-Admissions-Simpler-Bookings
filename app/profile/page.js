@@ -54,7 +54,7 @@ export default function Profile() {
   });
 
   const backendUser = userData?.data;
-  const profileData = backendUser?.profile || {};
+  const profileData = backendUser?.profile;
 
   useEffect(() => {
     if (user && backendUser) {

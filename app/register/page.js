@@ -172,7 +172,7 @@ export default function RegisterPage() {
             <GraduationCap className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-4xl font-bold text-gray-800 mb-2">
-            Join EduConnect
+            Join PathFinder
           </h2>
           <p className="text-gray-600">
             Create your account and start your educational journey

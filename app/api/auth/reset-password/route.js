@@ -48,11 +48,11 @@ export async function POST(req) {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "Password Reset - EduConnect",
+      subject: "Password Reset - PathFinder",
       html: `
         <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
           <h2 style="color: #4F46E5;">Password Reset Request</h2>
-          <p>You requested a password reset for your EduConnect account.</p>
+          <p>You requested a password reset for your PathFinder account.</p>
           <p>Click the button below to reset your password:</p>
           <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0;">Reset Password</a>
           <p>This link will expire in 1 hour.</p>
