@@ -72,7 +72,10 @@ export const authOptions = {
       ) {
         const email = user?.email || token.email;
         const name = user?.name || token.name;
-        const image = user?.image || token.picture;
+        const image =
+          user?.image ||
+          token.picture ||
+          "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
         let existingUser = null;
 
@@ -83,7 +86,11 @@ export const authOptions = {
               name,
               email,
               image,
-              role: "user", // default role
+              role: "user",
+              university: "N/A",
+              address: "N/A",
+              phone: "N/A",
+              dateOfBirth: "N/A",
               createdAt: new Date(),
             });
 

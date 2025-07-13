@@ -1,5 +1,4 @@
 import client from "@/lib/mongoClient";
-import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
@@ -7,12 +6,6 @@ export async function GET(req) {
     await client.connect();
     const db = client.db("pathFinder");
     const collegeCollection = db.collection("colleges");
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-    // 🔒 Require authentication
-    // if (!token) {
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    // }
 
     const college = await collegeCollection.find({}).toArray();
 

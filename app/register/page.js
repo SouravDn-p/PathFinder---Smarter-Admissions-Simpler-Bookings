@@ -26,6 +26,7 @@ import Input from "../../components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
+import Swal from "sweetalert2";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -56,7 +57,15 @@ export default function RegisterPage() {
     const { firstName, lastName, email, password, confirmPassword } = formData;
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Passwords do not match.",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
       return;
     }
 
@@ -69,11 +78,27 @@ export default function RegisterPage() {
         password,
       }).unwrap();
 
-      alert("Registration successful!");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "Registration successful!",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
       router.push("/login");
     } catch (err) {
       console.error("Registration error:", err);
-      alert(err?.data?.error || "Registration failed.");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: err?.data?.error || "Registration failed.",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
     } finally {
       setIsLoading(false);
     }

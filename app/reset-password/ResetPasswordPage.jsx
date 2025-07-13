@@ -15,6 +15,7 @@ import Input from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useResetPasswordMutation } from "@/redux/api/collegeApi";
 import { Suspense } from "react";
+import Swal from "sweetalert2";
 
 export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +50,15 @@ export default function ResetPasswordPage() {
     const { password, confirmPassword } = formData;
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Passwords do not match.",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
       return;
     }
 
@@ -59,12 +68,28 @@ export default function ResetPasswordPage() {
         token,
         password,
       }).unwrap();
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "Password updated successfully!",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
 
-      alert("Password updated successfully!");
       router.push("/login");
     } catch (err) {
       console.error("Reset password error:", err);
-      alert(err?.data?.error || "Failed to reset password.");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: err?.data?.error || "Failed to reset password.",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
     } finally {
       setIsLoading(false);
     }

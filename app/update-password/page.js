@@ -14,6 +14,7 @@ import {
 import Input from "../../components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import Swal from "sweetalert2";
 
 export default function UpdatePasswordPage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -56,7 +57,15 @@ export default function UpdatePasswordPage() {
     const { currentPassword, newPassword, confirmPassword } = formData;
 
     if (newPassword !== confirmPassword) {
-      alert("New passwords do not match.");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "warning",
+        title: "New passwords do not match.",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
       return;
     }
 
@@ -77,18 +86,42 @@ export default function UpdatePasswordPage() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Password updated successfully!");
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "error",
+          title: "Password updated successfully!",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
         setFormData({
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
         });
       } else {
-        alert(data.error || "Failed to update password");
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "error",
+          title: data.error || "Failed to update password",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
       }
     } catch (error) {
       console.error("Update password error:", error);
-      alert("Failed to update password");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Failed to update password",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
     } finally {
       setIsLoading(false);
     }

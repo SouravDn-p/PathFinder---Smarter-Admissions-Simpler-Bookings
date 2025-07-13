@@ -23,6 +23,7 @@ import Input from "../../components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Swal from "sweetalert2";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -51,13 +52,29 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        alert("Invalid credentials");
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "error",
+          title: "Invalid credentials",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
       } else {
         router.push("/");
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("Login failed");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Login failed",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -79,15 +96,38 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Password reset email sent! Check your inbox.");
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "Password reset email sent! Check your inbox.",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
         setShowForgotPassword(false);
         setForgotPasswordEmail("");
       } else {
-        alert(data.error || "Failed to send reset email");
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "error",
+          title: data.error || "Failed to send reset email",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
       }
     } catch (error) {
-      console.error("Forgot password error:", error);
-      alert("Failed to send reset email");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Failed to send reset email",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
     } finally {
       setForgotPasswordLoading(false);
     }

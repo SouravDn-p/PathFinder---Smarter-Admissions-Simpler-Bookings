@@ -26,6 +26,7 @@ import {
 } from "@/redux/api/collegeApi";
 import Image from "next/image";
 import Link from "next/link";
+import Swal from "sweetalert2";
 
 export default function Profile() {
   const { data: session, status } = useSession();
@@ -61,10 +62,10 @@ export default function Profile() {
       setFormData({
         name: user.name || "",
         email: user.email || "",
-        university: profileData.university || "",
-        address: profileData.address || "",
-        phone: profileData.phone || "",
-        dateOfBirth: profileData.dateOfBirth || "",
+        university: profileData?.university || "N/A",
+        address: profileData?.address || "",
+        phone: profileData?.phone || "",
+        dateOfBirth: profileData?.dateOfBirth || "",
       });
     }
   }, [user, backendUser, profileData]);
@@ -94,7 +95,15 @@ export default function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email) {
-      alert("Name and email are required");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "warning",
+        title: "Name and email are required",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
       return;
     }
 
@@ -103,20 +112,36 @@ export default function Profile() {
         email: user.email,
         data: {
           profile: {
-            university: formData.university,
-            address: formData.address,
-            phone: formData.phone,
-            dateOfBirth: formData.dateOfBirth,
+            university: formData?.university,
+            address: formData?.address,
+            phone: formData?.phone,
+            dateOfBirth: formData?.dateOfBirth,
           },
         },
       }).unwrap();
 
       setIsEditing(false);
       refetchUser();
-      alert("Profile updated successfully!");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "Profile updated successfully!",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
     } catch (error) {
       console.error("Profile update error:", error);
-      alert("Failed to update profile. Please try again.");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Failed to update profile. Please try again.",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
     }
   };
 
@@ -124,10 +149,10 @@ export default function Profile() {
     setFormData({
       name: user.name || "",
       email: user.email || "",
-      university: profileData.university || "",
-      address: profileData.address || "",
-      phone: profileData.phone || "",
-      dateOfBirth: profileData.dateOfBirth || "",
+      university: profileData?.university || "N/A",
+      address: profileData?.address || "",
+      phone: profileData?.phone || "",
+      dateOfBirth: profileData?.dateOfBirth || "",
     });
     setIsEditing(false);
   };
@@ -265,7 +290,7 @@ export default function Profile() {
                             id="university"
                             name="university"
                             type="text"
-                            value={formData.university}
+                            value={formData?.university}
                             onChange={handleChange}
                             placeholder="Enter your university/college"
                             className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900"
@@ -280,7 +305,7 @@ export default function Profile() {
                             id="phone"
                             name="phone"
                             type="tel"
-                            value={formData.phone}
+                            value={formData?.phone}
                             onChange={handleChange}
                             placeholder="Enter your phone number"
                             className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900"
@@ -298,7 +323,7 @@ export default function Profile() {
                             id="address"
                             name="address"
                             type="text"
-                            value={formData.address}
+                            value={formData?.address}
                             onChange={handleChange}
                             placeholder="Enter your address"
                             className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900"
@@ -316,7 +341,7 @@ export default function Profile() {
                             id="dateOfBirth"
                             name="dateOfBirth"
                             type="date"
-                            value={formData.dateOfBirth}
+                            value={formData?.dateOfBirth}
                             onChange={handleChange}
                             className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900"
                           />
@@ -382,7 +407,7 @@ export default function Profile() {
                             University/College
                           </Label>
                           <p className="text-lg font-medium text-gray-800">
-                            {profileData.university || "Not specified"}
+                            {profileData?.university || "Not specified"}
                           </p>
                         </div>
                         <div className="p-4 bg-orange-50 rounded-xl">
@@ -391,7 +416,7 @@ export default function Profile() {
                             Phone Number
                           </Label>
                           <p className="text-lg font-medium text-gray-800">
-                            {profileData.phone || "Not specified"}
+                            {profileData?.phone || "Not specified"}
                           </p>
                         </div>
                       </div>
@@ -403,7 +428,7 @@ export default function Profile() {
                             Address
                           </Label>
                           <p className="text-lg font-medium text-gray-800">
-                            {profileData.address || "Not specified"}
+                            {profileData?.address || "Not specified"}
                           </p>
                         </div>
                         <div className="p-4 bg-indigo-50 rounded-xl">
@@ -412,9 +437,9 @@ export default function Profile() {
                             Date of Birth
                           </Label>
                           <p className="text-lg font-medium text-gray-800">
-                            {profileData.dateOfBirth
+                            {profileData?.dateOfBirth
                               ? new Date(
-                                  profileData.dateOfBirth
+                                  profileData?.dateOfBirth
                                 ).toLocaleDateString()
                               : "Not specified"}
                           </p>

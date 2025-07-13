@@ -29,6 +29,7 @@ import {
 import CollegeLoading from "@/components/loadings/CollegeLoading";
 import Image from "next/image";
 import AdmissionLoading from "@/components/loadings/AdmissionLoading";
+import Swal from "sweetalert2";
 
 export default function Admission() {
   const { data: session, status } = useSession();
@@ -69,7 +70,15 @@ export default function Admission() {
 
   const handleCollegeSelect = (college) => {
     if (!user) {
-      alert("Please login to apply for admission");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "warning",
+        title: "Please login to apply for admission",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
       router.push("/login");
       return;
     }
@@ -106,7 +115,16 @@ export default function Admission() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedCollege) {
-      alert("Please select a college first");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "warning",
+        title: "Please select a college first",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
+
       return;
     }
 
@@ -119,7 +137,16 @@ export default function Admission() {
       !formData.address ||
       !formData.dateOfBirth
     ) {
-      alert("Please fill in all required fields");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "warning",
+        title: "Please fill in all required fields",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      });
+
       return;
     }
 
@@ -165,7 +192,15 @@ export default function Admission() {
       refetchUser();
     } catch (error) {
       console.error("Application submission error:", error);
-      alert("Failed to submit application. Please try again.");
+       Swal.fire({
+         toast: true,
+         position: "top-end",
+         icon: "warning",
+         title: "Failed to submit application. Please try again.",
+         showConfirmButton: false,
+         timer: 3000,
+         timerProgressBar: true,
+       });
     }
   };
 
