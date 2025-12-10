@@ -1,37 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# PathFinder – Smarter Admissions, Simpler Bookings 🎓
 
-## Getting Started
+A modern, full-stack college admission booking platform built using Next.js (App Router), Redux Toolkit, RTK Query, JWT, and MongoDB. PathFinder helps students search colleges, apply for admission, submit reviews, and track their applications — all in one responsive and user-friendly platform.
 
-First, run the development server:
+---
+
+## 🚀 Live Demo
+
+🌐 [View Live Site](https://path-finder-sourav.vercel.app)
+
+## 🧾 Job Task Overview
+
+This project was built based on a MERN Stack Developer Job Task requirement which involved:
+
+- Creating a fully functional **College Admission Web Application**
+- Using **Next.js with App Router**, **Redux Toolkit**, **RTK Query**, **JWT Authentication**
+- Implementing **college search, admission, review, profile management**, and **protected routes**
+
+---
+
+## 🧩 Features
+
+- 🔍 **College Search** – Filter colleges by name in real-time
+- 🏫 **College Listing** – 5–6 colleges with images, ratings, research count, and more
+- 📄 **College Details** – Events, sports, research, admission info with image gallery
+- 📝 **Admission Form** – User can submit a form with personal details and image
+- ✅ **My College Dashboard** – User's admission data and ability to add reviews
+- 🌟 **Review System** – Rate and review colleges; feedback is shown on the homepage
+- 🔐 **Authentication** –
+  - Email & password registration/login
+  - Google and social login via NextAuth or custom JWT
+  - Password reset
+- 👤 **User Profile** – Editable name, email, university, and address
+- 🧭 **Navigation Bar** – Includes Home, Colleges, Admission, My College
+- ⚠️ **404 Page** – Creative not found page
+- 📱 **Fully Responsive** – Optimized for desktop, tablet, and mobile
+
+---
+
+## 🔧 Tech Stack
+
+| Layer       | Technology                       |
+| ----------- | -------------------------------- |
+| Framework   | Next.js (App Router)             |
+| State Mgmt  | Redux Toolkit + RTK Query        |
+| Auth        | JWT + Google OAuth (or NextAuth) |
+| Backend API | Node.js + Express.js             |
+| Database    | MongoDB (Mongoose)               |
+| Styling     | Tailwind CSS                     |
+| Deployment  | Vercel / Render                  |
+
+---
+
+## 📁 Folder Structure
+/app
+├── page.tsx # Homepage
+├── colleges/ # College list & details
+├── admission/ # Admission form route
+├── dashboard/ # My college dashboard
+├── profile/ # Profile view/edit
+├── login/ /register/ # Auth routes
+├── not-found.tsx # 404 Page
+
+/components # Reusable UI components
+/features # Redux slices & RTK API
+/lib # Utility & helper functions
+/hooks # Custom hooks
+/public # Images & assets
+/styles # Tailwind/global styles
+/middleware.ts # Auth protection middleware
+
+
+---
+
+## 🧪 Getting Started
+
+### 1. Clone the Repository
 
 ```bash
+git clone https://github.com/your-username/pathfinder-college-booking.git
+cd pathfinder-college-booking
+
+npm install
+# or
+yarn install
+
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+MONGODB_URI=your_mongodb_connection
+JWT_SECRET=your_jwt_secret
+NEXTAUTH_URL=http://localhost:3000
+
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🧠 Future Improvements
+Admin Panel for managing colleges
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Advanced search/filtering
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Payment integration for admission
 
-## Learn More
+PDF generation for admission slips
 
-To learn more about Next.js, take a look at the following resources:
+📸 Screenshots
+(Add screenshots of homepage, college detail, admission form, my college, profile, etc.)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+📫 Contact
+Sourav Debnath
+📍 Brahmanbaria, Dhaka, Bangladesh
+💼 LinkedIn
+🌐 Portfolio: your-portfolio.com
+📧 Email: your.email@example.com
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+📄 License
+This project is open source and available under the MIT License.
 
-## Deploy on Vercel
+python
+Copy
+Edit
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# PathFinder---Smarter-Admissions-Simpler-Bookings
+Let me know if you want:
+- A Bengali version of the README  
+- A contribution guide (`CONTRIBUTING.md`)  
+- Tailored API route documentation for the backend  
+- Environment setup with NextAuth if you're mixing JWT and Google Login
+
+I'll gladly help!
